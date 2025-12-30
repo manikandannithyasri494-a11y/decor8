@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decor8 - Home</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f8f9fa; }
+    nav { background: white; padding: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    nav ul { display: flex; justify-content: center; list-style: none; gap: 2rem; margin: 0; padding: 0; }
+    nav a { text-decoration: none; color: #333; font-weight: 500; }
+    nav a:hover { color: #667eea; }
+    .logout-btn { background: #764ba2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: none; }
+    .logout-btn:hover { opacity: 0.9; }
+    header { position: relative; }
+    header img { width: 100%; height: 500px; object-fit: cover; }
+    header .overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: flex; flex-direction: column;
+      justify-content: center; align-items: center; color: white;
+    }
+    header .overlay h1 { font-size: 3rem; margin: 0; font-family: 'Georgia', serif; }
+    header .overlay p { font-size: 1.5rem; margin-top: 1rem; font-style: italic;
+      font-family: 'Cursive', sans-serif; color: #f8e8ff; }
+    .section { padding: 3rem 2rem; text-align: center; }
+    .section h2 { margin-bottom: 1.5rem; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+    .card { background: white; border-radius: 10px; padding: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-5px); }
+    .card img { width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+    footer { background: #333; color: white; padding: 1rem; text-align: center; margin-top: 2rem; }
+
+    /* Popup */
+    .popup {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    .popup-content {
+      background: white; padding: 2rem; border-radius: 10px; width: 320px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left;
+    }
+    .popup h2 { margin-top: 0; text-align: center; }
+    .popup input[type="text"], .popup input[type="password"], .popup input[type="email"] {
+      width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;
+      font-size: 16px;
+    }
+    .popup button {
+      width: 100%; padding: 12px; margin-top: 10px;
+      background: #764ba2; color: white; border: none; border-radius: 5px; cursor: pointer;
+      font-size: 16px; font-weight: 500;
+    }
+    .popup button:hover { opacity: 0.9; }
+    .popup .close { 
+      float: right; cursor: pointer; font-size: 24px; font-weight: bold;
+      color: #666; 
+    }
+    .popup .close:hover { color: #000; }
+    .toggle-link { color: #667eea; cursor: pointer; font-size: 14px; display: block; margin-top: 10px; text-align: center; }
+    .toggle-link:hover { text-decoration: underline; }
+    .remember { display: flex; align-items: center; font-size: 14px; margin: 10px 0; }
+    .remember input { margin-right: 6px; }
+    .password-box { position: relative; }
+    .password-box input { width: 100%; }
+    .toggle-password {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; font-size: 13px; color: #667eea;
+    }
+    .toggle-password:hover { text-decoration: underline; }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: #2ecc71;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 1000;
+    }
+    .notification.error {
+      background: #e74c3c;
+    }
+
+    /* Welcome Popup */
+    .welcome-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1002;
+      justify-content: center;
+      align-items: center;
+    }
+    .welcome-content {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .welcome-content h2 {
+      color: #764ba2;
+      margin-bottom: 15px;
+      font-size: 28px;
+    }
+    .welcome-content p {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .welcome-btn {
+      background: #764ba2;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .welcome-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Loader */
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 3px solid #764ba2;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Forgot Password Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1001;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .modal h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .modal p {
+      margin-bottom: 20px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .modal-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      flex: 1;
+    }
+    .modal-btn.cancel {
+      background: #f1f1f1;
+      color: #333;
+    }
+    .modal-btn.confirm {
+      background: #667eea;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#" onclick="goToProducts()">Products</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><button class="logout-btn" onclick="logoutUser()">Logout</button></li>
+    </ul>
+  </nav>
+
+  <!-- Banner -->
+  <header>
+    <img src="images/banner.jpg" alt="Decor Banner" onerror="this.src='https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'">
+    <div class="overlay">
+      <h1>Welcome to Decor8</h1>
+      <p>"Style Your Home, Live Your Dream"</p>
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <div class="section">
+    <h2>Transform Your Home with Style</h2>
+    <p>We bring you the perfect blend of modern furniture and elegant decor ideas to make your home unique and comfortable.</p>
+  </div>
+
+  <!-- Featured Rooms -->
+  <div class="section">
+    <h2>Explore Our Rooms</h2>
+    <div class="cards">
+      <div class="card" onclick="goToRoom('living')">
+        <img src="images/living_room.jpg" alt="Living Room" onerror="this.src='https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'">
+        <h3>Living Room</h3>
+      </div>
+      <div class="card" onclick="goToRoom('bedroom')">
+        <img src="images/bed_room.jpg" alt="Bedroom" onerror="this.src='https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80'">
+        <h3>Bedroom</h3>
+      </div>
+      <div class="card" onclick="goToRoom('kitchen')">
+        <img src="images/kitchen.jpg" alt="Kitchen" onerror="this.src='https://images.unsplash.com-1556911220-e15b29be8c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'">
+        <h3>Kitchen</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Decor8 | Designed by Nandhana Shri & Nithyasri - Madurai</p>
+  </footer>
+
+  <!-- Popup Login/Register -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <h2 id="formTitle">Login</h2>
+      
+      <!-- Login Form -->
+      <div id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <div class="password-box">
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <span class="toggle-password" onclick="togglePassword('loginPassword', this)">Show</span>
+        </div>
+        <label class="remember"><input type="checkbox" id="rememberMe"> Remember me</label>
+        <button onclick="loginUser()" id="loginBtn">Login</button>
+        <div class="loader" id="loginLoader"></div>
+        <span class="toggle-link" onclick="openForgotPasswordModal()">Forgot Password?</span>
+        <span class="toggle-link" onclick="switchToRegister()">Don't have an account? Register</span>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display:none;">
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <div class="password-box">
+          <input type="password" id="regPassword" placeholder="Password (min. 6 characters)" required minlength="6">
+          <span class="toggle-password" onclick="togglePassword('regPassword', this)">Show</span>
+        </div>
+        <button onclick="registerUser()" id="registerBtn">Register</button>
+        <div class="loader" id="registerLoader"></div>
+        <span class="toggle-link" onclick="switchToLogin()">Already have an account? Login</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Popup -->
+  <div id="welcomePopup" class="welcome-popup">
+    <div class="welcome-content">
+      <h2>Welcome to Decor8!</h2>
+      <p id="welcomeMessage">We're excited to have you join our community of home decor enthusiasts.</p>
+      <button class="welcome-btn" onclick="closeWelcomePopup()">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <h3>Reset Your Password</h3>
+      <p>Enter your email address and we'll send you a link to reset your password.</p>
+      <input type="email" id="resetEmail" placeholder="Enter your email address" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" onclick="closeForgotPasswordModal()">Cancel</button>
+        <button class="modal-btn confirm" onclick="sendResetEmail()">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut,
+      onAuthStateChanged,
+      sendPasswordResetEmail,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAKUe5yv0-fMeyMHwXVmUVerGE8nalpJxs",
+      authDomain: "decor8-b14e8.firebaseapp.com",
+      projectId: "decor8-b14e8",
+      storageBucket: "decor8-b14e8.appspot.com",
+      messagingSenderId: "301302844702",
+      appId: "1:301302844702:web:7376ed27571e8d40cccd0f",
+      measurementId: "G-NGJ1DN3SCY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    console.log("Firebase initialized successfully!");
+
+    let redirectRoom = null;
+    let currentUser = null;
+    let hasSeenWelcome = false;
+
+    // Check authentication state when page loads
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("User is logged in:", user.email);
+        currentUser = user;
+        document.querySelector('.logout-btn').style.display = 'block';
+      } else {
+        console.log("User is logged out");
+        currentUser = null;
+        document.querySelector('.logout-btn').style.display = 'none';
+      }
+    });
+
+    function showWelcomePopup(user) {
+      // Don't show welcome popup if user has already seen it
+      if (hasSeenWelcome) return;
+      
+      const welcomeMessage = document.getElementById('welcomeMessage');
+      const username = user.displayName || user.email.split('@')[0];
+      welcomeMessage.textContent = `Welcome, ${username}! We're excited to have you join our community of home decor enthusiasts.`;
+      document.getElementById('welcomePopup').style.display = 'flex';
+      hasSeenWelcome = true;
+    }
+
+    function closeWelcomePopup() {
+      document.getElementById('welcomePopup').style.display = 'none';
+      
+      // Redirect after user clicks "Get Started" if there's a redirect room
+      if (redirectRoom === "products") {
+        window.location.href = "products.html";
+      } else if (redirectRoom) {
+        window.location.href = "products.html#" + redirectRoom;
+      }
+      redirectRoom = null; // Reset redirect room
+    }
+
+    function showNotification(message, isSuccess = true) {
+      // Create notification element if it doesn't exist
+      let notification = document.getElementById('notification');
+      if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.right = '20px';
+        notification.style.padding = '15px 20px';
+        notification.style.color = 'white';
+        notification.style.borderRadius = '8px';
+        notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+        notification.style.zIndex = '1000';
+        document.body.appendChild(notification);
+      }
+      
+      notification.textContent = message;
+      notification.style.background = isSuccess ? '#2ecc71' : '#e74c3c';
+      notification.style.display = 'block';
+      
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    function showLoader(show, type = 'login') {
+      if (type === 'login') {
+        document.getElementById('loginLoader').style.display = show ? 'block' : 'none';
+        document.getElementById('loginBtn').style.display = show ? 'none' : 'block';
+      } else {
+        document.getElementById('registerLoader').style.display = show ? 'block' : 'none';
+        document.getElementById('registerBtn').style.display = show ? 'none' : 'block';
+      }
+    }
+
+    function goToProducts() {
+      if (!currentUser) {
+        redirectRoom = "products";
+        document.getElementById("loginPopup").style.display = "flex";
+        showNotification("Please login first", false);
+      } else {
+        window.location.href = "products.html";
+      }
+    }
+
+    function goToRoom(room) {
+      if (!currentUser) {
+        redirectRoom = room;
+        document.getElementById("loginPopup").style.display = "flex";
+        showNotification("Please login first", false);
+      } else {
+        window.location.href = "products.html#" + room;
+      }
+    }
+
+    function closePopup() {
+      document.getElementById("loginPopup").style.display = "none";
+    }
+
+    function switchToRegister() {
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("registerForm").style.display = "block";
+      document.getElementById("formTitle").innerText = "Register";
+    }
+
+    function switchToLogin() {
+      document.getElementById("registerForm").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("formTitle").innerText = "Login";
+    }
+
+    function togglePassword(inputId, el) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        el.innerText = "Hide";
+      } else {
+        input.type = "password";
+        el.innerText = "Show";
+      }
+    }
+
+    // Forgot Password Functions
+    function openForgotPasswordModal() {
+      const email = document.getElementById("loginEmail").value;
+      if (email) {
+        document.getElementById("resetEmail").value = email;
+      }
+      document.getElementById("forgotPasswordModal").style.display = "flex";
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById("forgotPasswordModal").style.display = "none";
+      document.getElementById("resetEmail").value = "";
+    }
+
+    async function sendResetEmail() {
+      const email = document.getElementById("resetEmail").value;
+      
+      if (!email) {
+        showNotification("Please enter your email address", false);
+        return;
+      }
+      
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showNotification("Password reset email sent! Check your inbox and spam folder.");
+        closeForgotPasswordModal();
+      } catch (error) {
+        console.error("Reset error:", error);
+        if (error.code === "auth/user-not-found") {
+          showNotification("No account found with this email", false);
+        } else if (error.code === "auth/invalid-email") {
+          showNotification("Invalid email address", false);
+        } else {
+          showNotification("Error sending reset email. Please try again.", false);
+        }
+      }
+    }
+
+    // Firebase login function
+    async function loginUser() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      
+      if (!email || !password) {
+        showNotification("Please enter email and password.", false);
+        return;
+      }
+      
+      showLoader(true, 'login');
+      
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("User logged in:", userCredential.user);
+        
+        closePopup();
+        showWelcomePopup(userCredential.user);
+        
+        // Removed the automatic redirect - now it only happens when user clicks "Get Started"
+        
+      } catch (error) {
+        console.error("Login error:", error.message);
+        let errorMessage = "Login failed. Please try again.";
+        
+        if (error.code === "auth/invalid-email") {
+          errorMessage = "Invalid email address.";
+        } else if (error.code === "auth/user-not-found") {
+          errorMessage = "No account found with this email.";
+        } else if (error.code === "auth/wrong-password") {
+          errorMessage = "Incorrect password.";
+        }
+        
+        showNotification(errorMessage, false);
+      } finally {
+        showLoader(false, 'login');
+      }
+    }
+
+    // Firebase register function
+    async function registerUser() {
+      const name = document.getElementById("regName").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      
+      if (!name || !email || !password) {
+        showNotification("Please fill all fields.", false);
+        return;
+      }
+      
+      if (password.length < 6) {
+        showNotification("Password must be at least 6 characters.", false);
+        return;
+      }
+      
+      showLoader(true, 'register');
+      
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Set display name for the user
+        await updateProfile(userCredential.user, {
+          displayName: name
+        });
+        
+        console.log("User registered:", userCredential.user);
+        
+        showWelcomePopup(userCredential.user);
+        closePopup();
+        
+        // Removed the automatic redirect - now it only happens when user clicks "Get Started"
+        
+      } catch (error) {
+        console.error("Registration error:", error.message);
+        let errorMessage = "Registration failed. Please try again.";
+        
+        if (error.code === "auth/email-already-in-use") {
+          errorMessage = "This email is already registered.";
+        } else if (error.code === "auth/invalid-email") {
+          errorMessage = "Invalid email address.";
+        } else if (error.code === "auth/weak-password") {
+          errorMessage = "Password is too weak.";
+        }
+        
+        showNotification(errorMessage, false);
+      } finally {
+        showLoader(false, 'register');
+      }
+    }
+
+    // Firebase logout function
+    async function logoutUser() {
+      try {
+        await signOut(auth);
+        showNotification("You have been logged out.");
+        // Reset the welcome flag when user logs out
+        hasSeenWelcome = false;
+      } catch (error) {
+        console.error("Logout error:", error.message);
+        showNotification("Logout failed. Please try again.", false);
+      }
+    }
+
+    // Make functions globally available for HTML onclick handlers
+    window.goToProducts = goToProducts;
+    window.goToRoom = goToRoom;
+    window.closePopup = closePopup;
+    window.switchToRegister = switchToRegister;
+    window.switchToLogin = switchToLogin;
+    window.togglePassword = togglePassword;
+    window.loginUser = loginUser;
+    window.registerUser = registerUser;
+    window.logoutUser = logoutUser;
+    window.openForgotPasswordModal = openForgotPasswordModal;
+    window.closeForgotPasswordModal = closeForgotPasswordModal;
+    window.sendResetEmail = sendResetEmail;
+    window.closeWelcomePopup = closeWelcomePopup;
+
+    // Close popup when clicking outside
+    window.addEventListener('click', function(event) {
+      const popup = document.getElementById('loginPopup');
+      const modal = document.getElementById('forgotPasswordModal');
+      const welcomePopup = document.getElementById('welcomePopup');
+      
+      if (event.target === popup) {
+        closePopup();
+      }
+      if (event.target === modal) {
+        closeForgotPasswordModal();
+      }
+      if (event.target === welcomePopup) {
+        closeWelcomePopup();
+      }
+    });
+  </script>
+</body>
+</html>

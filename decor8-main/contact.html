@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Decor8</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    .contact-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    .contact-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .contact-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .contact-header p {
+      font-size: 1.1rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .contact-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+    
+    .contact-form-container {
+      flex: 1;
+      min-width: 300px;
+      max-width: 600px;
+    }
+    
+    .contact-form {
+      background: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .form-group input, 
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus, 
+    .form-group textarea:focus {
+      border-color: #b5a268;
+      outline: none;
+    }
+    
+    .contact-form button {
+      width: 100%;
+      padding: 14px;
+      background: #b5a268;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .contact-form button:hover {
+      background: #9a8855;
+    }
+    
+    .contact-image {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .contact-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .contact-info {
+      background: #b5a268;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      margin-top: 40px;
+      border-radius: 10px;
+    }
+    
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .contact-info-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+    }
+    
+    .contact-info-item i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .contact-info-item a {
+      color: white;
+      text-decoration: none;
+      transition: text-decoration 0.3s;
+    }
+    
+    .contact-info-item a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .contact-content {
+        flex-direction: column;
+      }
+      
+      .contact-image {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contact-container">
+    <div class="contact-header">
+      <h1>Contact Us</h1>
+      <p>Have questions or need assistance? We're here to help. Fill out the form below and we'll get back to you as soon as possible.</p>
+    </div>
+    
+    <div class="contact-content">
+      <div class="contact-form-container">
+        <div class="contact-form">
+          <form id="contact-form">
+            <!-- Add this hidden field - YOUR EMAIL as recipient -->
+  <input type="hidden" name="to_email" value="manikandan.nithyasri494@gmail.com">
+  
+  <div class="form-group">
+    <label for="name">Enter your Name</label>
+    <input type="text" id="name" name="from_name" placeholder="Your full name" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Enter a valid email address</label>
+    <input type="email" id="email" name="reply_to" placeholder="your.email@example.com" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="message">Enter your message</label>
+    <textarea id="message" name="message" rows="5" placeholder="Please fill out this field." required></textarea>
+  </div>
+  <button type="submit">Send Message</button>
+  </form>
+        </div>
+      </div>
+      
+      <div class="contact-image">
+        <img src="images/sofaplantnew.png" alt="Decor8 Contact Image">
+      </div>
+    </div>
+    
+    <div class="contact-info">
+      <div class="contact-info-grid">
+        <div class="contact-info-item">
+          <i class="fas fa-phone"></i>
+          <div>Call Us:</div>
+          <div>
+            <a href="tel:8807648478">8807648478</a>, 
+            <a href="tel:8098260354">8098260354</a>
+          </div>
+        </div>
+        
+        <div class="contact-info-item">
+          <i class="fas fa-envelope"></i>
+          <div>Email:</div>
+          <div>
+            <a href="mailto:manikandan.nithyasri494@gmail.com">manikandan.nithyasri494@gmail.com</a>
+          </div>
+        </div>
+        
+        <div class="contact-info-item">
+          <i class="fas fa-envelope"></i>
+          <div>Email:</div>
+          <div>
+            <a href="mailto:nandhanashri2006@gmail.com">nandhanashri2006@gmail.com</a>
+          </div>
+        </div>
+        
+        <div class="contact-info-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <div>Location:</div>
+          <div>Madurai, Tamilnadu, India</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Init EmailJS with your Public Key
+    (function(){
+      emailjs.init("4NouW_e35hJLmsz92");
+    })();
+
+    // Handle form submit with your correct Service ID and Template ID
+    document.getElementById("contact-form").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      // Send email using your correct IDs
+      emailjs.sendForm("service_z4xlkbd", "template_vt60k5l", this)
+      .then(() => {
+        alert("✅ Message sent successfully!");
+        this.reset();
+      }, (err) => {
+        alert("❌ Failed to send: " + JSON.stringify(err));
+      });
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+

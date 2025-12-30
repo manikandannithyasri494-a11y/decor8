@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View in Your Space - DECOR8</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .tagline {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .ar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem auto;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+        }
+        
+        model-viewer {
+            width: 100%;
+            height: 500px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .ar-button {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .ar-button:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 500px;
+            font-size: 1.2rem;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            model-viewer {
+                height: 400px;
+            }
+            
+            .ar-button {
+                bottom: 20px;
+                padding: 12px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">DECOR8</div>
+        <p class="tagline">See it in your space before you buy</p>
+    </div>
+
+    <div class="container">
+        <div class="ar-container">
+            <h2>View in Augmented Reality</h2>
+            <p>Point your camera at a flat surface to place this item</p>
+            
+            <div id="model-container">
+                <div class="loading" id="loading">Loading furniture model...</div>
+                <model-viewer 
+                    id="ar-viewer"
+                    alt="3D Furniture Model"
+                    ar 
+                    ar-modes="webxr scene-viewer quick-look"
+                    environment-image="neutral" 
+                    shadow-intensity="1"
+                    camera-controls 
+                    touch-action="pan-y"
+                    auto-rotate
+                    reveal="interaction"
+                >
+                    <button slot="ar-button" class="ar-button">
+                        👆 View in Your Space
+                    </button>
+                </model-viewer>
+            </div>
+            
+            <div id="error-message" class="error-message" style="display: none;">
+                Sorry, we couldn't load the requested furniture item.
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">← Back to Home</a>
+            <a href="products.html" class="nav-btn">View All Products</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Developed by Nandhana Shri & Nithyasri</p>
+        <p>Contact: nandhanashri2006@gmail.com | manikandan.nithyasri494@gmail.com</p>
+        <p>&copy; 2025 DECOR8. All rights reserved.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const modelName = urlParams.get('model');
+            const arViewer = document.getElementById('ar-viewer');
+            const loadingElement = document.getElementById('loading');
+            const errorElement = document.getElementById('error-message');
+            
+            if (modelName) {
+                // Try to load the requested model
+                arViewer.src = `models/${modelName}.glb`;
+                arViewer.alt = `3D model of ${modelName}`;
+                
+                // Handle loading events
+                arViewer.addEventListener('load', function() {
+                    loadingElement.style.display = 'none';
+                    arViewer.style.display = 'block';
+                });
+                
+                arViewer.addEventListener('error', function() {
+                    loadingElement.style.display = 'none';
+                    errorElement.style.display = 'block';
+                    errorElement.innerHTML = `Sorry, we couldn't load "${modelName}". Please check if the model exists.`;
+                });
+                
+                // Set timeout in case loading hangs
+                setTimeout(function() {
+                    if (loadingElement.style.display !== 'none') {
+                        loadingElement.style.display = 'none';
+                        errorElement.style.display = 'block';
+                        errorElement.innerHTML = 'Loading took too long. Please try again.';
+                    }
+                }, 10000); // 10 second timeout
+                
+            } else {
+                // No model specified
+                loadingElement.style.display = 'none';
+                errorElement.style.display = 'block';
+                errorElement.innerHTML = 'No furniture item specified. Please go to our products page.';
+            }
+        });
+    </script>
+</body>
+</html>
